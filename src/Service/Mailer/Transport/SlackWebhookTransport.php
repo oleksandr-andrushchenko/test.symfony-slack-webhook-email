@@ -23,7 +23,8 @@ class SlackWebhookTransport extends AbstractHttpTransport
         ?LoggerInterface $logger,
         private readonly string $webhookBaseUrl,
         private readonly SlackWebhookProviderInterface $slackWebhookProvider,
-    ) {
+    )
+    {
         parent::__construct($client, $dispatcher, $logger);
     }
 
@@ -46,23 +47,21 @@ class SlackWebhookTransport extends AbstractHttpTransport
                 ]);
 
                 $statusCode = $response->getStatusCode();
-                $content = $response->getContent();
-            } catch (ExceptionInterface $exception) {
-                // remember exception for finally block
-            } finally {
-                $message = match (true) {
-                    isset($exception) => $exception->getMessage(),
-                    $statusCode !== 200 => sprintf('Failed to send an email ("%d" code)', $statusCode),
-                    $content !== 'ok' => sprintf('Failed to send an email ("%s" content)', $content),
-                    default => null,
-                };
 
-                if ($message !== null) {
-                    if (isset($response)) {
-                        $previousException = new HttpTransportException($exception->getMessage(), $response, previous: $previousException ?? null);
-                    } else {
-                        $previousException = new TransportException($exception->getMessage(), previous: $previousException ?? null);
-                    }
+                if ($statusCode !== 200) {
+                    throw new HttpTransportException(sprintf('Failed to send an email ("%d" code)', $statusCode), $response);
+                }
+
+                $content = $response->getContent();
+
+                if ($content !== 'ok') {
+                    throw new HttpTransportException(sprintf('Failed to send an email ("%s" content)', $content), $response);
+                }
+            } catch (ExceptionInterface $exception) {
+                if (isset($response)) {
+                    $previousException = new HttpTransportException($exception->getMessage(), $response, previous: $previousException ?? null);
+                } else {
+                    $previousException = new TransportException($exception->getMessage(), previous: $previousException ?? null);
                 }
             }
         }
