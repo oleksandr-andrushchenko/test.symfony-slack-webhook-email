@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/test.traject.iml" filepath="$PROJECT_DIR$/.idea/test.traject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/test.symfony-slack-webhook-email.iml" filepath="$PROJECT_DIR$/.idea/test.symfony-slack-webhook-email.iml" />
     </modules>
   </component>
 </project>
