@@ -1,0 +1,23 @@
+parameters:
+  app.slack_mailer_fallback_webhook: '%env(SLACK_MAILER_FALLBACK_WEBHOOK)%'
+  app.slack_mailer_webhooks: '%env(json:SLACK_MAILER_WEBHOOKS)%'
+  app.slack_mailer_webhook_base_url: '%env(SLACK_MAILER_WEBHOOK_BASE_URL)%'
+
+services:
+  app.mailer.transport_factory.slack_webhook_provider.static:
+    class: App\Service\Mailer\Transport\Slack\StaticSlackWebhookProvider
+    arguments:
+      - '%app.slack_mailer_fallback_webhook%'
+      - '%app.slack_mailer_webhooks%'
+
+  app.mailer.transport_factory.slack_webhook_provider:
+    alias: 'app.mailer.transport_factory.slack_webhook_provider.static'
+
+  app.mailer.transport_factory.slack:
+    class: App\Service\Mailer\Transport\SlackTransportFactory
+    parent: 'mailer.transport_factory.abstract'
+    arguments:
+      - '%app.slack_mailer_webhook_base_url%'
+      - '@app.mailer.transport_factory.slack_webhook_provider'
+    tags:
+      - 'mailer.transport_factory'
