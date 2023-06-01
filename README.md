@@ -9,6 +9,10 @@
 * Test: php bin/console mailer:test "oleksandr.andrushchenko1988@gmail.com" --body="Thank you!"
 * [Check your channel](img.png)
 
+## Changelog
+
+* v1.0 - Basic symfony slack webhook email implementation & simple unit tests
+
 ## History
 
 * cd ~/Projects
